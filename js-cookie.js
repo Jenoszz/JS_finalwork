@@ -22,7 +22,7 @@
 			window.Cookies = OldCookies;
 			return api;
 		};
-	}
+    }
 }(function () {
 	function extend () {
 		var i = 0;
@@ -58,7 +58,6 @@
 
 			// We're using "expires" because "max-age" is not supported by IE
 			attributes.expires = attributes.expires ? attributes.expires.toUTCString() : '';
-
 			try {
 				var result = JSON.stringify(value);
 				if (/^[\{\[]/.test(result)) {

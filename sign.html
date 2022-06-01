@@ -21,7 +21,6 @@ const onFileSelected = async (event) => {
   document.getElementById("imgPreviewId").src = fileUrl;
   document.getElementById("imgPreviewId").style.display = "block";
 }
-
 const onProgress = ({ progress }) => {
   console.log(`File uploading: ${progress}% complete.`)
 }
