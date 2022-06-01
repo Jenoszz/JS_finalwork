@@ -1,11 +1,6 @@
 <center><h1>2021-2022学年第2学期</h1></center>
 
-
-
 ![zucc](https://js-sigcc.vercel.app/zucc.png)
-
-
-
 
 
 <div style="margin-left:38%">- 课程名称:跨平台脚本开发技术</div>
@@ -16,9 +11,6 @@
 <div style="margin-left:38%">- 实验指导教师:郭鸣</div>
 
 [TOC]
-
-
-------
 
 # 一、与自我评估
 
@@ -48,9 +40,6 @@
 # 二、项目自评等级:(1-5)
 
 ​		**等级：**4
-
-
-
 
 
 # 三、项目说明
