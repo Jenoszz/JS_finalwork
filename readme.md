@@ -31,15 +31,15 @@
 | RestAPI        |       4        | Restful风格API                                           |
 | upload.js      |       3        | 封装头像到url地址                                            |
 
-## （三）github提交记录（仓库地址https://github.com/pzypzy777/JS_finalwork）
+## （三）github提交记录（仓库地址https://github.com/Jenoszz/JS_finalwork.git）
 
-![image-20220531175045843](readme.assets/image-20220531175045843.png)
+![](image/readme/1654073381864.png)
 
 
 
 # 二、项目自评等级:(1-5)
 
-​		**等级：**4
+​	**等级：**4
 
 
 # 三、项目说明
