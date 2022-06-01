@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <title>排行榜</title>
+    <script src="js/http.js"></script>
+    <link rel="stylesheet" href="./myexpress/public/stylesheets/rank.css">
+    <script src="./js/upload.js"></script>
+    <script></script>
+  </head>
+
+  <body
+    style="
+      background-color: rgba(107, 182, 231, 0.87);
+      color: rgb(65, 60, 56);
+      display: flex;
+      flex-flow: column;
+      justify-content: center;
+      align-items: center;
+      width: 80%;
+      height: 80%;
+      margin: 0 auto;
+      border-radius: 30px;
+      margin-top: 50px;
+      border-radius: 30px;
+    "
+  >
+  <div class="container">
+ <div class="header">
+      <div>
+        <img alt="" src="" name="srcImage" id="imgPreviewId" width="80px;" height="80px;"  style="border-radius: 30px; margin:10px 20px;" 
+        onclick="onFileSelected(event)"><br>
+        <div id ="gai" onclick="showChange()" class="but" style="display:block;">修改头像</div>
+        <div id="change" style="display:none;">
+          <input type="file" name="image" onchange="onFileSelected(event)">
+            <img alt="" src="" name="srcImage" id="imgAfterId" width="100px;" height="100px;" style="display:none;">
+            <!-- <div onclick="changeHead()" class="but">确认</div> -->
+            <!-- <input
+          type="submit"
+          value="确认"
+          onclick="changeHead()"
+          class="but"
+        /> -->
+        </div>
+        <h3 id="user" style="text-align: center; margin-left: 40px;"></h3>
+        
+        
+      </div>
+      <div>
+        
+        <div onclick="loginout()" class="but">退出</div>
+        
+      </div>
+    </div>
+    <div class="main">
+      
+      <div class="right">
+       
+        <h1>游戏记录</h1>
+        <div>
+          <table id="rc">
+            <thead>
+              <td>时间</td>
+              <td>得分</td>
+            </thead>
+          </table>
+          <div class="pp">
+            <div onclick="pre()">上一页</div>
+            <div id="page">第0页/共0页</div>
+            <div onclick="next()">下一页</div>
+          </div>
+        </div>
+      </div>
+      <div class="left">
+        <h1>2048排行榜</h1>
+        <table id="rank">
+          <thead>
+            <td>用户</td>
+            <td>最高分数</td>
+            <td>时间</td>
+          </thead>
+        </table>
+
+      </div>
+    </div>
+  </div>
+   
+  </body>
+  <script src="js/jquery-3.5.0.min.js"></script>
+  <script>
+    var index = 0;
+    var page = 6;
+    var allpage = 0;
+function showChange(){
+  document.getElementById("change").style.display="block";
+  document.getElementById("gai").style.display="none";
+}
+    function loginout() {
+      document.cookie = "";
+      window.location.href = "./index.html";
+    }
+
+    function pre() {
+      if (index != 0) {
+        index--;
+        getRecord();
+      }
+    }
+
+    function next() {
+      if (index != allpage - 1) {
+        index++;
+        getRecord();
+      }
+    }
+    const upload = new Upload({ apiKey: "free" }); // Get from Upload.io
+
+const onFileSelected = async (event) => {
+  const [ file ]    = event.target.files;
+  const { fileUrl } = await upload.uploadFile({ file, onProgress });
+  console.log(`File uploaded: ${fileUrl}`);
+  document.getElementById("imgAfterId").src = fileUrl;
+  document.getElementById("imgAfterId").style.display = "block";
+  alert("上传成功");
+  let xmlhttp = new XMLHttpRequest();
+      let name = parseInt(getCookie("name"));
+      var img = document.getElementById("imgAfterId").src;
+      console.log(img)
+            var obj = {
+              id: name,
+              head: img,
+            };
+      xmlhttp.open("POST", myurl + "/user/"+ name +"/modifyhead/", true);
+      xmlhttp.setRequestHeader("Content-Type", "application/json");
+      xmlhttp.send(JSON.stringify(obj));
+    //   alert("修改成功！");
+      location.reload();
+}
+    // function changeHead() {
+    //   let xmlhttp = new XMLHttpRequest();
+    //   let name = parseInt(getCookie("name"));
+    //   var img = document.getElementById("imgAfterId").src;
+    //   console.log(img)
+    //         var obj = {
+    //           id: name,
+    //           head: img,
+    //         };
+    //   xmlhttp.open("POST", myurl + "/user/"+ name +"/modifyhead/", true);
+    //   xmlhttp.setRequestHeader("Content-Type", "application/json");
+    //   xmlhttp.send(JSON.stringify(obj));
+    //   alert("修改成功！");
+    //   location.reload();
+    // }
+    function getRank() {
+      let xmlhttp = new XMLHttpRequest();
+      let name = parseInt(getCookie("name"));
+      xmlhttp.open("GET", myurl + "/record/"+ name +"/rank", true);
+      xmlhttp.setRequestHeader("Content-Type", "application/json");
+      xmlhttp.send();
+
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          let rank = document.getElementById("rank");
+          let json = JSON.parse(xmlhttp.responseText);
+          let child = rank.childNodes;
+          for (let i = child.length - 1; i >= 0; i--) {
+            rank.removeChild(child[i]);
+          }
+
+          if (json.status == 200) {
+            let thead = document.createElement("thead");
+
+            let td1 = document.createElement("td");
+            td1.innerHTML = "用户";
+            let td2 = document.createElement("td");
+            td2.innerHTML = "最高得分";
+
+            thead.appendChild(td1);
+            thead.appendChild(td2);
+            rank.appendChild(thead);
+
+            for (let i = 0; i < json.data.length; i++) {
+              let tr = document.createElement("tr");
+
+              let td1 = document.createElement("td");
+              td1.innerHTML = json.data[i].name;
+              let td2 = document.createElement("td");
+              td2.innerHTML = json.data[i].max;
+              tr.appendChild(td1);
+              tr.appendChild(td2);
+              rank.appendChild(tr);
+            }
+          } else {
+          }
+        }
+      };
+    }   
+    const onProgress = ({ progress }) => {
+  console.log(`File uploading: ${progress}% complete.`)
+}
+
+    function getCookie(name) {
+      var arr = document.cookie.split("; ");
+      for (var i = 0, len = arr.length; i < len; i++) {
+        var item = arr[i].split("=");
+        if (item[0] == name) {
+          return item[1];
+        }
+      }
+      return "";
+    }
+
+    window.onload = function () {
+      getName();
+      getRecord();
+      getRank();
+    };
+
+    function getName() {
+      let xmlhttp = new XMLHttpRequest();
+      let name = parseInt(getCookie("name"));
+      xmlhttp.open("GET", myurl + "/user/" + name, true);
+      xmlhttp.setRequestHeader("Content-Type", "application/json");
+      xmlhttp.send();
+
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          let json = JSON.parse(xmlhttp.responseText);
+
+          if (json.status == 200) {
+            let us = document.getElementById("user");
+            let userimg = document.getElementById("imgPreviewId");
+            console.log(json.data);
+            userimg.src = json.data[0].head;
+            us.innerHTML = json.data[0].name+" 玩家 , 你好 !";
+          } else {
+          }
+        }
+      };
+    }
+
+    function getRecord() {
+      let xmlhttp = new XMLHttpRequest();
+      let name = parseInt(getCookie("name"));
+      xmlhttp.open(
+        "GET",
+        myurl + "/record/" + name + "?page=" + index + "&size=" + page,
+        true
+      );
+      xmlhttp.setRequestHeader("Content-Type", "application/json");
+
+      xmlhttp.send();
+
+      xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+          let rc = document.getElementById("rc");
+          let pg = document.getElementById("page");
+          let child = rc.childNodes;
+          for (let i = child.length - 1; i >= 0; i--) {
+            rc.removeChild(child[i]);
+          }
+          let json = JSON.parse(xmlhttp.responseText);
+
+          if (json.status == 200) {
+            let thead = document.createElement("thead");
+
+            let td1 = document.createElement("td");
+            td1.innerHTML = "时间";
+            let td2 = document.createElement("td");
+            td2.innerHTML = "得分";
+
+            thead.appendChild(td1);
+            thead.appendChild(td2);
+            rc.appendChild(thead);
+            allpage = 24 / parseInt(page);
+            pg.innerHTML = "第" + (index + 1) + "页/共" + allpage + "页";
+
+            for (let i = 0; i < json.data.length; i++) {
+              let tr = document.createElement("tr");
+
+              let td1 = document.createElement("td");
+              td1.innerHTML = rTime(json.data[i].time);
+              let td2 = document.createElement("td");
+              td2.innerHTML = json.data[i].score;
+
+              tr.appendChild(td1);
+              tr.appendChild(td2);
+
+              rc.appendChild(tr);
+            }
+          } else {
+          }
+        }
+      };
+    }
+    function rTime(date) {
+    var json_date = new Date(date).toJSON();
+    return new Date(new Date(json_date) + 8 * 3600 * 1000).toISOString().replace(/T/g, ' ').replace(/\.[\d]{3}Z/, '') ;
+
+    
+}
+  </script>
+</html>
